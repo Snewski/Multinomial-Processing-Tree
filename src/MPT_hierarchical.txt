@@ -1,0 +1,41 @@
+model{
+
+  #-------- Model for first option --------------
+  kappa_A ~ dunif(0,1)
+  gamma_A ~ dunif(0,1)
+  theta_HA <- kappa_A + ((1-kappa_A)*gamma_A)
+  theta_MA <- ((1-kappa_A)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*(1-gamma_D))
+  HA ~ dbin(theta_HA,nA)
+  MA ~ dbin(theta_MA,nA)
+
+  #-------- Model for second option --------------
+  kappa_B ~ dunif(0,1)
+  gamma_B ~ dunif(0,1)
+  theta_HB <- kappa_B + ((1-kappa_B)*(1-gamma_A)*gamma_B)
+  theta_GB <- ((1-kappa_A)*(1-gamma_A)*gamma_B)
+  theta_MB <- ((1-kappa_B)*gamma_A) + ((1-kappa_B)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*(1-gamma_D))
+  HB ~ dbin(theta_HB,nB)
+  GB ~ dbin(theta_GB,nA)
+  MB ~ dbin(theta_MB,nB)
+
+  #-------- Model for third option --------------
+  kappa_C ~ dunif(0,1)
+  gamma_C ~ dunif(0,1)
+  theta_HC <- kappa_C + ((1-kappa_C)*(1-gamma_A)*(1-gamma_B)*gamma_C)
+  theta_GC <- ((1-kappa_A)*(1-gamma_A)*(1-gamma_B)*gamma_C) + ((1-kappa_B)*(1-gamma_A)*(1-gamma_B)*gamma_C) 
+  theta_MC <- ((1-kappa_C)*gamma_A) + ((1-kappa_C)*(1-gamma_A)*gamma_B) + ((1-kappa_C)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*(1-gamma_D))
+  HC ~ dbin(theta_HC,nC)
+  GC ~ dbin(theta_GC,nA+nB)
+  MC ~ dbin(theta_MC,nC)
+
+  #-------- Model for fourth option --------------
+  kappa_D ~ dunif(0,1)
+  gamma_D ~ dunif(0,1)
+  theta_HD <- kappa_D + ((1-kappa_D)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*gamma_D)
+  theta_GD <- ((1-kappa_A)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*gamma_D) + ((1-kappa_B)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*gamma_D) + ((1-kappa_C)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*gamma_D)
+  theta_MD <- ((1-kappa_D)*gamma_A) + ((1-kappa_D)*(1-gamma_A)*gamma_B) + ((1-kappa_D)*(1-gamma_A)*(1-gamma_B)*gamma_C) + ((1-kappa_D)*(1-gamma_A)*(1-gamma_B)*(1-gamma_C)*(1-gamma_D))
+  HD ~ dbin(theta_HD,nD)
+  GD ~ dbin(theta_GD,nA+nB+nC)
+  MD ~ dbin(theta_MD,nD)
+
+}
