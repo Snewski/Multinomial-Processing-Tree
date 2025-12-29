@@ -1,0 +1,35 @@
+model{
+
+  #-------- Model for first option --------------
+  kappa_A ~ dunif(0,1)
+  gamma_A ~ dunif(0,1)
+  theta_HA <- kappa_A + ((1-kappa_A)*gamma_A)
+  theta_MA <- ((1-kappa_A)*(1-gamma_A))
+  HA ~ dbin(theta_HA,nA)
+  MA ~ dbin(theta_MA,nA)
+
+  #-------- Model for second option --------------
+  kappa_B ~ dunif(0,1)
+  gamma_B ~ dunif(0,1)
+  theta_HB <- kappa_B + ((1-kappa_B)*gamma_B)
+  theta_MB <- ((1-kappa_B)*(1-gamma_B))
+  HB ~ dbin(theta_HB,nB)
+  MB ~ dbin(theta_MB,nB)
+
+  #-------- Model for third option --------------
+  kappa_C ~ dunif(0,1)
+  gamma_C ~ dunif(0,1)
+  theta_HC <- kappa_C + ((1-kappa_C)*gamma_C)
+  theta_MC <- ((1-kappa_C)*(1-gamma_C))
+  HC ~ dbin(theta_HC,nC)
+  MC ~ dbin(theta_MC,nC)
+
+  #-------- Model for fourth option --------------
+  kappa_D ~ dunif(0,1)
+  gamma_D ~ dunif(0,1)
+  theta_HD <- kappa_D + ((1-kappa_D)*gamma_D)
+  theta_MD <- ((1-kappa_D)*(1-gamma_D))
+  HD ~ dbin(theta_HD,nD)
+  MD ~ dbin(theta_MD,nD)
+
+}
