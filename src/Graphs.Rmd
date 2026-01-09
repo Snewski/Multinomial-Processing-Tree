@@ -1,0 +1,700 @@
+---
+title: "Graphs"
+output: html_document
+---
+
+```{r}
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(rsvg)
+library(ggplot2)
+library(png)
+library(grid)
+library(gridExtra)
+```
+
+
+```{r}
+# Simple Model
+simple_a <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"A) Highest Free Man\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  A     [label = <<I>A</I>>]
+  KA    [label = <<I>HA</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GA    [label = <<I>HA</I>>] 
+  MA    [label = <<I>MA</I>>]
+  mid [shape=point, style=invis, width=0, height=0, fixedsize=true]
+
+  { rank = same; KA; GA; MA; mid }
+  
+  // Edges with labels
+  A -> KA [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> GA [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> mid [style=invis]
+  dot -> MA [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+
+}
+")
+
+
+simple_b <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"B) Link Out\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  B     [label = <<I>B</I>>]
+  KB    [label = <<I>HB</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GB    [label = <<I>HB</I>>] 
+  MB    [label = <<I>MB</I>>]
+  mid [shape=point, style=invis, width=0, height=0, fixedsize=true]
+
+  { rank = same; KB; GB; MB; mid }
+  
+  // Edges with labels
+  B -> KB [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  B -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> GB [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> mid [style=invis]
+  dot -> MB [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+
+}
+")
+
+simple_c <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"C) Switch Play to Open Lines\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  C     [label = <<I>C</I>>]
+  KC    [label = <<I>HC</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GC    [label = <<I>HC</I>>] 
+  MC    [label = <<I>MC</I>>]
+  mid [shape=point, style=invis, width=0, height=0, fixedsize=true]
+
+  { rank = same; KC; GC; MC; mid }
+  
+  // Edges with labels
+  C -> KC [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  C -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> GC [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> mid [style=invis]
+  dot -> MC [ xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+
+}
+")
+
+
+simple_d <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"D) Pass it Over the Opponent\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  D     [label = <<I>D</I>>]
+  KD    [label = <<I>HD</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GD    [label = <<I>HD</I>>] 
+  MD    [label = <<I>MD</I>>]
+  mid [shape=point, style=invis, width=0, height=0, fixedsize=true]
+
+  { rank = same; KD; GD; MD; mid }
+  
+  // Edges with labels
+  D -> KD [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  D -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> GD [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+  dot -> mid [style=invis] // invisible edges to balance layout
+  dot -> MD [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=2, labelangle=60]
+
+}
+")
+
+
+```
+
+```{r}
+# Combining the simple models into 1 figure
+rsvg_png(charToRaw(export_svg(simple_a)), "Graphs/simple_a.png")
+rsvg_png(charToRaw(export_svg(simple_b)), "Graphs/simple_b.png")
+rsvg_png(charToRaw(export_svg(simple_c)), "Graphs/simple_c.png")
+rsvg_png(charToRaw(export_svg(simple_d)), "Graphs/simple_d.png")
+
+# Read PNGs
+img_a <- readPNG("Graphs/simple_a.png")
+img_b <- readPNG("Graphs/simple_b.png")
+img_c <- readPNG("Graphs/simple_c.png")
+img_d <- readPNG("Graphs/simple_d.png")
+
+# Convert to raster grobs
+grob_a <- rasterGrob(img_a, interpolate=TRUE)
+grob_b <- rasterGrob(img_b, interpolate=TRUE)
+grob_c <- rasterGrob(img_c, interpolate=TRUE)
+grob_d <- rasterGrob(img_d, interpolate=TRUE)
+
+# Wrap each grob in a ggplot with white background and black border
+plot_a <- ggplot() +
+  annotation_custom(grob_a, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_b <- ggplot() +
+  annotation_custom(grob_b, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_c <- ggplot() +
+  annotation_custom(grob_c, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_d <- ggplot() +
+  annotation_custom(grob_d, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+# Arrange in 2x2 grid
+final <- arrangeGrob(plot_a, plot_b, plot_c, plot_d, ncol=2)
+
+# Save to file with white background
+ggsave("Graphs/simple_figure.png", final, width=8, height=8, bg="white")
+
+```
+
+
+```{r}
+simple_plate <- grViz("
+digraph plate_demo {
+  graph [rankdir=TB, splines=true]
+  node [fontsize=22]
+
+  // ---- Category-level parameters (outside plate) ----
+  kappa_s [shape=circle, label=<<I>κ<SUB>s</SUB></I>>]
+  gamma_s [shape=circle, label=<<I>γ<SUB>s</SUB></I>>]
+
+  // ---- Trial plate ----
+  subgraph cluster_trials {
+    label = <<FONT POINT-SIZE='22'>t trials</FONT>>
+    labelloc = 'b'
+    labeljust = 'l'
+    style = solid
+    color = black
+
+    S_t     [shape=square, style=filled, label=<<I>S<SUB>t</SUB></I>>]
+    theta_t [shape=circle, peripheries=2, label=<<I>θ<SUB>t</SUB></I>>]
+    y_t     [shape=square, style=filled, label=<<I>y<SUB>t</SUB></I>>]
+  }
+
+  // ---- Edges ----
+  // S_t selects which κ_s and γ_s apply
+  S_t -> kappa_s
+  S_t -> gamma_s
+
+  // κ_s and γ_s determine θ_t
+  kappa_s -> theta_t
+  gamma_s -> theta_t
+
+  // θ_t determines y_t
+  theta_t -> y_t
+}
+")
+```
+
+
+```{r}
+# Saving plate notation
+rsvg_png(charToRaw(export_svg(simple_plate)), "Graphs/simple_plate.png")
+```
+
+
+```{r}
+hier_plate <- grViz("
+digraph hier_mpt {
+  graph [rankdir=TB, splines=true]
+  node [fontsize=22]
+
+  // ---------------- Group-level parameters (forced to top) ----------------
+  subgraph cluster_group {
+    rank = min
+    style = invis
+
+    mu_kappa    [
+      shape=circle,
+      fixedsize=true,
+      width=1.2,
+      height=1.2,
+      label=<<I>μ<FONT POINT-SIZE='16'><SUB>κ,S</SUB></FONT></I>>
+    ]
+
+    sigma_kappa [
+      shape=circle,
+      fixedsize=true,
+      width=1.2,
+      height=1.2,
+      label=<<I>σ<FONT POINT-SIZE='16'><SUB>κ,S</SUB></FONT></I>>
+    ]
+    
+    mu_gamma    [
+      shape=circle,
+      fixedsize=true,
+      width=1.2,
+      height=1.2,
+      label=<<I>μ<FONT POINT-SIZE='16'><SUB>γ,S</SUB></FONT></I>>
+    ]
+    
+    sigma_gamma [
+      shape=circle,
+      fixedsize=true,
+      width=1.2,
+      height=1.2,
+      label=<<I>σ<FONT POINT-SIZE='16'><SUB>γ,S</SUB></FONT></I>>
+    ]
+  }
+
+  // ---------------- Individual plate ----------------
+  subgraph cluster_individuals {
+    label = <<FONT POINT-SIZE='22'>i individuals</FONT>>
+    labelloc = 'b'
+    labeljust = 'l'
+    style = solid
+    color = black
+
+    kappa_i [shape=circle, label=<<I>κ<sub>t,i</sub></I>>]
+    gamma_i [shape=circle, label=<<I>γ<sub>t,i</sub></I>>]
+
+    // -------- Trial plate inside individual plate --------
+    subgraph cluster_trials {
+      label = <<FONT POINT-SIZE='22'>t trials</FONT>>
+      labelloc = 'b'
+      labeljust = 'l'
+      style = solid
+      color = black
+
+      S_it     [shape=square, style=filled, label=<<I>S<sub>t</sub></I>>]
+      theta_it [shape=circle, peripheries=2, label=<<I>θ<sub>t,i</sub></I>>]
+      y_it     [shape=square, style=filled, label=<<I>y<sub>t,i</sub></I>>]
+    }
+
+    // Individual-level edges
+    kappa_i -> theta_it
+    gamma_i -> theta_it
+    theta_it -> y_it
+  }
+
+  // ---------------- Group-to-individual edges ----------------
+  mu_kappa    -> kappa_i
+  sigma_kappa -> kappa_i
+
+  mu_gamma    -> gamma_i
+  sigma_gamma -> gamma_i
+
+  // ---------------- S_it selects group-level parameters ----------------
+  S_it -> mu_kappa
+  S_it -> sigma_kappa
+  S_it -> mu_gamma
+  S_it -> sigma_gamma
+
+  // ---------------- Invisible edges to force vertical ordering ----------------
+  mu_kappa -> kappa_i [style=invis]
+  mu_gamma -> kappa_i [style=invis]
+}
+")
+```
+
+```{r}
+# Saving plate notation
+rsvg_png(charToRaw(export_svg(hier_plate)), "Graphs/team_plate.png")
+```
+
+
+
+```{r}
+# False alarm models
+false_a <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"A) Highest Free Man\", labelloc = t, fontsize=14]
+
+  // Nodes with uniform size
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+
+  A       [label = <<I>A</I>>]
+  Succes  [label = <<I>HA</I>>]
+  dot     [shape = point, style = solid, width=0.05]
+  F1      [label = <<I>HA</I>>]
+  F2      [label = <<I>MA</I>>]
+  F3      [label = <<I>MA</I>>]
+  F4      [label = <<I>MA</I>>]
+  
+{ rank = same; Succes; F1; F2; F3; F4}
+
+  // labels
+  A -> Succes [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> F1 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F2 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F3 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F4 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+
+}
+")
+
+false_b <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"B) Link Out\", labelloc = t, fontsize=14]
+
+  // Nodes with uniform size
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+
+  A       [label = <<I>B</I>>]
+  Succes  [label = <<I>HB</I>>]
+  dot     [shape = point, style = solid, width=0.05]
+  F1      [label = <<I>FA</I>>]
+  F2      [label = <<I>HB</I>>]
+  F3      [label = <<I>MB</I>>]
+  F4      [label = <<I>MB</I>>]
+  
+{ rank = same; Succes; F1; F2; F3; F4}
+
+  // labels
+  A -> Succes [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> F1 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F2 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F3 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F4 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+
+}
+")
+
+false_c <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"C) Switch Play to Open Lines\", labelloc = t, fontsize=14]
+
+  // Nodes with uniform size
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+
+  A       [label = <<I>C</I>>]
+  Succes  [label = <<I>HC</I>>]
+  dot     [shape = point, style = solid, width=0.05]
+  F1      [label = <<I>FA</I>>]
+  F2      [label = <<I>FB</I>>]
+  F3      [label = <<I>HC</I>>]
+  F4      [label = <<I>MC</I>>]
+  
+{ rank = same; Succes; F1; F2; F3; F4}
+
+  // labels
+  A -> Succes [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> F1 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F2 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F3 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F4 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+
+}
+")
+
+false_d <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"D) Pass it Over the Opponent\", labelloc = t, fontsize=14]
+
+  // Nodes with uniform size
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+
+  A       [label = <<I>D</I>>]
+  Succes  [label = <<I>HD</I>>]
+  dot     [shape = point, style = solid, width=0.05]
+  F1      [label = <<I>FA</I>>]
+  F2      [label = <<I>FB</I>>]
+  F3      [label = <<I>FC</I>>]
+  F4      [label = <<I>HD</I>>]
+  
+{ rank = same; Succes; F1; F2; F3; F4}
+
+  // labels
+  A -> Succes [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> F1 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F2 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F3 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> F4 [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+
+}
+")
+
+```
+
+```{r}
+# Combining false alarm models into one figure. 
+rsvg_png(charToRaw(export_svg(false_a)), "Graphs/false_a.png")
+rsvg_png(charToRaw(export_svg(false_b)), "Graphs/false_b.png")
+rsvg_png(charToRaw(export_svg(false_c)), "Graphs/false_c.png")
+rsvg_png(charToRaw(export_svg(false_d)), "Graphs/false_d.png")
+
+# Read PNGs
+img_a <- readPNG("Graphs/false_a.png")
+img_b <- readPNG("Graphs/false_b.png")
+img_c <- readPNG("Graphs/false_c.png")
+img_d <- readPNG("Graphs/false_d.png")
+
+# Convert to raster grobs
+grob_a <- rasterGrob(img_a, interpolate=TRUE)
+grob_b <- rasterGrob(img_b, interpolate=TRUE)
+grob_c <- rasterGrob(img_c, interpolate=TRUE)
+grob_d <- rasterGrob(img_d, interpolate=TRUE)
+
+# Wrap each grob in a ggplot with white background and black border
+plot_a <- ggplot() +
+  annotation_custom(grob_a, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_b <- ggplot() +
+  annotation_custom(grob_b, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_c <- ggplot() +
+  annotation_custom(grob_c, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_d <- ggplot() +
+  annotation_custom(grob_d, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+# Arrange in 2x2 grid
+final <- arrangeGrob(plot_a, plot_b, plot_c, plot_d, ncol=2)
+
+# Save to file with white background
+ggsave("Graphs/false_figure.png", final, width=8, height=8, bg="white")
+```
+
+
+
+```{r}
+# Hierarchical Models
+hierarchical_a <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"A) Highest Free Man\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  A     [label = <<I>A</I>>]
+  KA    [label = <<I>HA</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GA    [label = <<I>HA</I>>] 
+  dot2  [shape = point, style = solid, width=0.05]
+  GB    [label = <<I>GB</I>>]
+  dot3  [shape = point, style = solid, width=0.05]
+  GC    [label = <<I>GC</I>>]
+  dot4  [shape = point, style = solid, width=0.05]
+  GD    [label = <<I>GD</I>>]
+  MA    [label = <<I>MA</I>>]
+
+  { rank = same; KA; GA, GB, GC, GD, MA}
+  
+  // Edges with labels
+  A -> KA [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> GA [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> dot2 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot2 -> GB [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot2 -> dot3 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot3 -> GC [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot3 -> dot4 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot4 -> GD [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot4 -> MA [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+}
+")
+
+hierarchical_b <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"B) Link Out\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  A     [label = <<I>B</I>>]
+  KA    [label = <<I>HB</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GA    [label = <<I>MB</I>>] 
+  dot2  [shape = point, style = solid, width=0.05]
+  GB    [label = <<I>HB</I>>]
+  dot3  [shape = point, style = solid, width=0.05]
+  GC    [label = <<I>GC</I>>]
+  dot4  [shape = point, style = solid, width=0.05]
+  GD    [label = <<I>GD</I>>]
+  MA    [label = <<I>MB</I>>]
+
+  { rank = same; KA; GA, GB, GC, GD, MA}
+  
+  // Edges with labels
+  A -> KA [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> GA [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> dot2 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot2 -> GB [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot2 -> dot3 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot3 -> GC [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot3 -> dot4 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot4 -> GD [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot4 -> MA [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+}
+")
+
+
+hierarchical_c <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"C) Switch Play to Open Lines\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  A     [label = <<I>C</I>>]
+  KA    [label = <<I>HC</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GA    [label = <<I>MC</I>>] 
+  dot2  [shape = point, style = solid, width=0.05]
+  GB    [label = <<I>MC</I>>]
+  dot3  [shape = point, style = solid, width=0.05]
+  GC    [label = <<I>HC</I>>]
+  dot4  [shape = point, style = solid, width=0.05]
+  GD    [label = <<I>GD</I>>]
+  MA    [label = <<I>MC</I>>]
+
+  { rank = same; KA; GA, GB, GC, GD, MA}
+  
+  // Edges with labels
+  A -> KA [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> GA [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> dot2 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot2 -> GB [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot2 -> dot3 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot3 -> GC [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot3 -> dot4 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot4 -> GD [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot4 -> MA [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+}
+")
+
+hierarchical_d <- grViz("
+digraph plate_notation {
+  graph [layout = dot, rankdir = LR, ranksep = 1.2, label = \"D) Pass it Over the Opponent\", labelloc = t, fontsize=14]
+  // Default node style
+  node [shape = circle, style = filled, fillcolor = white, fixedsize = true, width = 1]
+  // Nodes
+  A     [label = <<I>D</I>>]
+  KA    [label = <<I>HD</I>>]
+  dot   [shape = point, style = solid, width=0.05]
+  GA    [label = <<I>MD</I>>] 
+  dot2  [shape = point, style = solid, width=0.05]
+  GB    [label = <<I>MD</I>>]
+  dot3  [shape = point, style = solid, width=0.05]
+  GC    [label = <<I>MD</I>>]
+  dot4  [shape = point, style = solid, width=0.05]
+  GD    [label = <<I>HD</I>>]
+  MA    [label = <<I>MD</I>>]
+
+  { rank = same; KA; GA, GB, GC, GD, MA}
+  
+  // Edges with labels
+  A -> KA [label=<<I><FONT POINT-SIZE='14'>κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  A -> dot [xlabel=<<I><FONT POINT-SIZE='14'>1-κ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot -> GA [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot -> dot2 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>A</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot2 -> GB [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot2 -> dot3 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>B</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot3 -> GC [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot3 -> dot4 [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>C</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+  dot4 -> GD [label=<<I><FONT POINT-SIZE='14'>γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=4, labelangle=60]
+  dot4 -> MA [xlabel=<<I><FONT POINT-SIZE='14'>1-γ</FONT><SUB><FONT POINT-SIZE='10'>D</FONT></SUB></I>>, labeldistance=3, labelangle=60]
+}
+")
+```
+
+
+```{r}
+# Combining hierarchical models into one figure. 
+rsvg_png(charToRaw(export_svg(hierarchical_a)), "Graphs/hierarchical_a.png")
+rsvg_png(charToRaw(export_svg(hierarchical_b)), "Graphs/hierarchical_b.png")
+rsvg_png(charToRaw(export_svg(hierarchical_c)), "Graphs/hierarchical_c.png")
+rsvg_png(charToRaw(export_svg(hierarchical_d)), "Graphs/hierarchical_d.png")
+
+# Read PNGs
+img_a <- readPNG("Graphs/hierarchical_a.png")
+img_b <- readPNG("Graphs/hierarchical_b.png")
+img_c <- readPNG("Graphs/hierarchical_c.png")
+img_d <- readPNG("Graphs/hierarchical_d.png")
+
+# Convert to raster grobs
+grob_a <- rasterGrob(img_a, interpolate=TRUE)
+grob_b <- rasterGrob(img_b, interpolate=TRUE)
+grob_c <- rasterGrob(img_c, interpolate=TRUE)
+grob_d <- rasterGrob(img_d, interpolate=TRUE)
+
+# Wrap each grob in a ggplot with white background and black border
+plot_a <- ggplot() +
+  annotation_custom(grob_a, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_b <- ggplot() +
+  annotation_custom(grob_b, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_c <- ggplot() +
+  annotation_custom(grob_c, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+plot_d <- ggplot() +
+  annotation_custom(grob_d, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+  theme_void() +
+  theme(panel.background = element_rect(fill="white", colour=NA),
+        plot.background  = element_rect(fill="white", colour=NA),
+        panel.border     = element_rect(colour="black", fill=NA, linewidth=1))
+
+# Arrange in 2x2 grid
+final <- arrangeGrob(plot_a, plot_b, plot_c, plot_d, ncol=2)
+
+# Save to file with white background
+ggsave("Graphs/hierarchical_figure.png", final, width=8, height=8, bg="white")
+
+
+```
+
+
+
+
