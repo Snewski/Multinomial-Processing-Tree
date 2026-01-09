@@ -1,0 +1,110 @@
+model {
+
+  ############################################################
+  # GROUP-LEVEL PRIORS
+
+
+  # kappa priors
+  kappa_A_mu ~ dunif(0,1)
+  kappa_B_mu ~ dunif(0,1)
+  kappa_C_mu ~ dunif(0,1)
+  kappa_D_mu ~ dunif(0,1)
+
+  kappa_A_sigma ~ dunif(0,1)
+  kappa_B_sigma ~ dunif(0,1)
+  kappa_C_sigma ~ dunif(0,1)
+  kappa_D_sigma ~ dunif(0,1)
+
+  tau_kappa_A <- pow(kappa_A_sigma, -2)
+  tau_kappa_B <- pow(kappa_B_sigma, -2)
+  tau_kappa_C <- pow(kappa_C_sigma, -2)
+  tau_kappa_D <- pow(kappa_D_sigma, -2)
+
+  # gamma priors
+  gamma_A_mu ~ dunif(0,1)
+  gamma_B_mu ~ dunif(0,1)
+  gamma_C_mu ~ dunif(0,1)
+  gamma_D_mu ~ dunif(0,1)
+
+  gamma_A_sigma ~ dunif(0,1)
+  gamma_B_sigma ~ dunif(0,1)
+  gamma_C_sigma ~ dunif(0,1)
+  gamma_D_sigma ~ dunif(0,1)
+
+  tau_gamma_A <- pow(gamma_A_sigma, -2)
+  tau_gamma_B <- pow(gamma_B_sigma, -2)
+  tau_gamma_C <- pow(gamma_C_sigma, -2)
+  tau_gamma_D <- pow(gamma_D_sigma, -2)
+
+
+  ############################################################
+  # SUBJECT-LEVEL MODEL
+
+  for (s in 1:Nsubj) {
+
+    #----------------------------------------------------------
+    # Subject-level parameters drawn from group distributions
+    #----------------------------------------------------------
+
+    kappa_A[s] ~ dnorm(kappa_A_mu, tau_kappa_A) T(0,1)
+    kappa_B[s] ~ dnorm(kappa_B_mu, tau_kappa_B) T(0,1)
+    kappa_C[s] ~ dnorm(kappa_C_mu, tau_kappa_C) T(0,1)
+    kappa_D[s] ~ dnorm(kappa_D_mu, tau_kappa_D) T(0,1)
+
+    gamma_A[s] ~ dnorm(gamma_A_mu, tau_gamma_A) T(0,1)
+    gamma_B[s] ~ dnorm(gamma_B_mu, tau_gamma_B) T(0,1)
+    gamma_C[s] ~ dnorm(gamma_C_mu, tau_gamma_C) T(0,1)
+    gamma_D[s] ~ dnorm(gamma_D_mu, tau_gamma_D) T(0,1)
+
+
+    ############################################################
+    # FIRST OPTION (A)
+
+    theta_HA[s] <- kappa_A[s] + ((1 - kappa_A[s]) * gamma_A[s])
+    theta_FA[s] <- ((1 - kappa_B[s]) * gamma_A[s]) +
+                   ((1 - kappa_C[s]) * gamma_A[s]) +
+                   ((1 - kappa_D[s]) * gamma_A[s])
+    theta_MA[s] <- ((1 - kappa_A[s]) * gamma_B[s]) +
+                   ((1 - kappa_A[s]) * gamma_C[s]) +
+                   ((1 - kappa_A[s]) * gamma_D[s])
+
+    HA[s] ~ dbin(theta_HA[s], nA[s])
+    FA[s] ~ dbin(theta_FA[s], nB[s] + nC[s] + nD[s])
+    MA[s] ~ dbin(theta_MA[s], nA[s])
+
+
+    ############################################################
+    # SECOND OPTION (B)
+
+    theta_HB[s] <- kappa_B[s] + ((1 - kappa_B[s]) * gamma_B[s])
+    theta_FB[s] <- ((1 - kappa_C[s]) * gamma_B[s]) +
+                   ((1 - kappa_D[s]) * gamma_B[s])
+    theta_MB[s] <- ((1 - kappa_B[s]) * gamma_C[s]) +
+                   ((1 - kappa_B[s]) * gamma_D[s])
+
+    HB[s] ~ dbin(theta_HB[s], nB[s])
+    FB[s] ~ dbin(theta_FB[s], nC[s] + nD[s])
+    MB[s] ~ dbin(theta_MB[s], nB[s])
+
+
+    ############################################################
+    # THIRD OPTION (C)
+
+    theta_HC[s] <- kappa_C[s] + ((1 - kappa_C[s]) * gamma_C[s])
+    theta_FC[s] <- ((1 - kappa_D[s]) * gamma_C[s])
+    theta_MC[s] <- ((1 - kappa_C[s]) * gamma_D[s])
+
+    HC[s] ~ dbin(theta_HC[s], nC[s])
+    FC[s] ~ dbin(theta_FC[s], nD[s])
+    MC[s] ~ dbin(theta_MC[s], nC[s])
+
+
+    ############################################################
+    #                 FOURTH OPTION (D)
+
+    theta_HD[s] <- kappa_D[s] + ((1 - kappa_D[s]) * gamma_D[s])
+    HD[s] ~ dbin(theta_HD[s], nD[s])
+
+  } # end subject loop
+
+}
